@@ -126,6 +126,40 @@ curl http://localhost:3000/api/veiculos?disponivel=true
 
 ## 🐳 Docker
 
+### 🚀 Início Rápido com Scripts
+
+Desenvolvemos scripts auxiliares para facilitar o gerenciamento do Docker:
+
+**Linux/Mac:**
+```bash
+chmod +x docker.sh
+./docker.sh start    # Iniciar produção
+./docker.sh dev      # Iniciar desenvolvimento
+./docker.sh help     # Ver todos os comandos
+```
+
+**Windows PowerShell:**
+```powershell
+.\docker.ps1 start   # Iniciar produção
+.\docker.ps1 dev     # Iniciar desenvolvimento
+.\docker.ps1 help    # Ver todos os comandos
+```
+
+**Comandos disponíveis:**
+- `start` - Iniciar ambiente de produção completo
+- `dev` - Iniciar apenas PostgreSQL para desenvolvimento local
+- `stop` - Parar containers
+- `restart` - Reiniciar containers
+- `logs` - Visualizar logs do backend
+- `status` - Ver status dos containers
+- `build` - Reconstruir imagem
+- `clean` - Limpar tudo (⚠️ remove volumes)
+- `test` - Testar API
+- `shell` - Abrir shell no backend
+- `db` - Conectar ao PostgreSQL
+- `migrate` - Executar migrations
+- `seed` - Popular banco com dados de exemplo
+
 ### Opção 1: Produção Completa (Backend + PostgreSQL)
 
 Execute todo o sistema com um único comando:
@@ -148,7 +182,6 @@ docker-compose down -v
 - ✅ PostgreSQL rodando na porta `5432`
 - ✅ Backend rodando na porta `3000`
 - ✅ Migrations executadas automaticamente
-- ✅ Seeders executados automaticamente
 - ✅ Healthcheck do banco configurado
 
 ### Opção 2: Desenvolvimento (Apenas PostgreSQL)
