@@ -42,7 +42,7 @@ case "$1" in
         echo -e "${GREEN}✅ Containers iniciados!${NC}"
         echo -e "${BLUE}📝 API disponível em http://localhost:3000/api${NC}"
         ;;
-    
+
     dev)
         echo -e "${GREEN}🔧 Iniciando ambiente de desenvolvimento...${NC}"
         docker-compose -f docker-compose.dev.yml up -d
@@ -50,36 +50,36 @@ case "$1" in
         echo -e "${BLUE}📝 Database disponível em localhost:5433${NC}"
         echo -e "${BLUE}🎨 Prisma Studio disponível em http://localhost:5555${NC}"
         ;;
-    
+
     stop)
         echo -e "${YELLOW}⏸  Parando containers...${NC}"
         docker-compose down
         docker-compose -f docker-compose.dev.yml down 2>/dev/null || true
         echo -e "${GREEN}✅ Containers parados!${NC}"
         ;;
-    
+
     restart)
         echo -e "${YELLOW}🔄 Reiniciando containers...${NC}"
         docker-compose restart
         echo -e "${GREEN}✅ Containers reiniciados!${NC}"
         ;;
-    
+
     logs)
         echo -e "${BLUE}📋 Logs do backend:${NC}"
         docker-compose logs -f backend
         ;;
-    
+
     status)
         echo -e "${BLUE}📊 Status dos containers:${NC}"
         docker-compose ps
         ;;
-    
+
     build)
         echo -e "${GREEN}🔨 Reconstruindo imagem...${NC}"
         docker-compose build --no-cache backend
         echo -e "${GREEN}✅ Imagem reconstruída!${NC}"
         ;;
-    
+
     clean)
         echo -e "${RED}🧹 Limpando tudo (containers, volumes, redes)...${NC}"
         read -p "Tem certeza? Isso apagará o banco de dados! (y/N) " -n 1 -r
@@ -92,7 +92,7 @@ case "$1" in
             echo -e "${YELLOW}⏸  Operação cancelada${NC}"
         fi
         ;;
-    
+
     test)
         echo -e "${BLUE}🧪 Testando API...${NC}"
         echo ""
@@ -104,33 +104,33 @@ case "$1" in
         curl -s http://localhost:3000/api/veiculos | jq . || curl -s http://localhost:3000/api/veiculos
         echo ""
         ;;
-    
+
     shell)
         echo -e "${BLUE}🐚 Abrindo shell no backend...${NC}"
         docker-compose exec backend sh
         ;;
-    
+
     db)
         echo -e "${BLUE}🗄️  Conectando ao PostgreSQL...${NC}"
         docker-compose exec postgres psql -U locar -d locar
         ;;
-    
+
     migrate)
         echo -e "${GREEN}🔄 Executando migrations...${NC}"
         docker-compose exec backend npx prisma migrate deploy
         echo -e "${GREEN}✅ Migrations executadas!${NC}"
         ;;
-    
+
     seed)
         echo -e "${GREEN}🌱 Executando seeders...${NC}"
         docker-compose exec backend npm run prisma:seed
         echo -e "${GREEN}✅ Seeders executados!${NC}"
         ;;
-    
+
     help|--help|-h|"")
         show_help
         ;;
-    
+
     *)
         echo -e "${RED}❌ Comando desconhecido: $1${NC}"
         echo ""

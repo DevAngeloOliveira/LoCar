@@ -38,7 +38,7 @@ switch ($Command) {
         Write-Host "✅ Containers iniciados!" -ForegroundColor Green
         Write-Host "📝 API disponível em http://localhost:3000/api" -ForegroundColor Blue
     }
-    
+
     "dev" {
         Write-Host "🔧 Iniciando ambiente de desenvolvimento..." -ForegroundColor Green
         docker-compose -f docker-compose.dev.yml up -d
@@ -46,36 +46,36 @@ switch ($Command) {
         Write-Host "📝 Database disponível em localhost:5433" -ForegroundColor Blue
         Write-Host "🎨 Prisma Studio disponível em http://localhost:5555" -ForegroundColor Blue
     }
-    
+
     "stop" {
         Write-Host "⏸  Parando containers..." -ForegroundColor Yellow
         docker-compose down
         docker-compose -f docker-compose.dev.yml down 2>$null
         Write-Host "✅ Containers parados!" -ForegroundColor Green
     }
-    
+
     "restart" {
         Write-Host "🔄 Reiniciando containers..." -ForegroundColor Yellow
         docker-compose restart
         Write-Host "✅ Containers reiniciados!" -ForegroundColor Green
     }
-    
+
     "logs" {
         Write-Host "📋 Logs do backend:" -ForegroundColor Blue
         docker-compose logs -f backend
     }
-    
+
     "status" {
         Write-Host "📊 Status dos containers:" -ForegroundColor Blue
         docker-compose ps
     }
-    
+
     "build" {
         Write-Host "🔨 Reconstruindo imagem..." -ForegroundColor Green
         docker-compose build --no-cache backend
         Write-Host "✅ Imagem reconstruída!" -ForegroundColor Green
     }
-    
+
     "clean" {
         Write-Host "🧹 Limpando tudo (containers, volumes, redes)..." -ForegroundColor Red
         $confirm = Read-Host "Tem certeza? Isso apagará o banco de dados! (y/N)"
@@ -87,7 +87,7 @@ switch ($Command) {
             Write-Host "⏸  Operação cancelada" -ForegroundColor Yellow
         }
     }
-    
+
     "test" {
         Write-Host "🧪 Testando API..." -ForegroundColor Blue
         Write-Host ""
@@ -98,29 +98,29 @@ switch ($Command) {
         Invoke-RestMethod -Uri "http://localhost:3000/api/veiculos" -UseBasicParsing | ConvertTo-Json
         Write-Host ""
     }
-    
+
     "shell" {
         Write-Host "🐚 Abrindo shell no backend..." -ForegroundColor Blue
         docker-compose exec backend sh
     }
-    
+
     "db" {
         Write-Host "🗄️  Conectando ao PostgreSQL..." -ForegroundColor Blue
         docker-compose exec postgres psql -U locar -d locar
     }
-    
+
     "migrate" {
         Write-Host "🔄 Executando migrations..." -ForegroundColor Green
         docker-compose exec backend npx prisma migrate deploy
         Write-Host "✅ Migrations executadas!" -ForegroundColor Green
     }
-    
+
     "seed" {
         Write-Host "🌱 Executando seeders..." -ForegroundColor Green
         docker-compose exec backend npm run prisma:seed
         Write-Host "✅ Seeders executados!" -ForegroundColor Green
     }
-    
+
     default {
         if ($Command) {
             Write-Host "❌ Comando desconhecido: $Command" -ForegroundColor Red

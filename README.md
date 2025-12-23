@@ -675,7 +675,103 @@ npm run lint           # Executa ESLint
 
 ## � Deploy
 
-### Deploy no Render (Backend)
+### Deploy no Fly.io (Backend) - RECOMENDADO
+
+O Fly.io oferece um plano gratuito generoso e é mais simples de configurar.
+
+#### Pré-requisitos
+
+1. **Instalar Fly CLI:**
+```bash
+# Windows (PowerShell)
+iwr https://fly.io/install.ps1 -useb | iex
+
+# macOS/Linux
+curl -L https://fly.io/install.sh | sh
+```
+
+2. **Fazer login:**
+```bash
+fly auth login
+```
+
+#### Deploy Passo a Passo
+
+**1. Criar aplicação e PostgreSQL:**
+```bash
+# Criar app (o nome deve ser único globalmente)
+fly apps create locar-backend-seu-nome
+
+# Criar banco PostgreSQL gratuito
+fly postgres create --name locar-db --region gru --vm-size shared-cpu-1x --initial-cluster-size 1 --volume-size 1
+
+# Conectar banco ao app
+fly postgres attach locar-db -a locar-backend-seu-nome
+```
+
+**2. Configurar CORS (opcional):**
+```bash
+# Após deploy do frontend na Vercel, configure:
+fly secrets set FRONTEND_URL=https://seu-app.vercel.app -a locar-backend-seu-nome
+```
+
+**3. Deploy:**
+```bash
+# Deploy da aplicação
+fly deploy
+
+# Verificar status
+fly status
+
+# Ver logs
+fly logs
+```
+
+**4. Executar seeders (opcional):**
+```bash
+# Conectar ao console
+fly ssh console -a locar-backend-seu-nome
+
+# Dentro do container
+npm run prisma:seed
+exit
+```
+
+#### Comandos Úteis Fly.io
+
+```bash
+# Ver apps
+fly apps list
+
+# Ver logs em tempo real
+fly logs -a locar-backend-seu-nome
+
+# Abrir dashboard
+fly dashboard locar-backend-seu-nome
+
+# Escalar máquina
+fly scale vm shared-cpu-1x --memory 512
+
+# Ver configurações
+fly config show
+
+# Conectar ao PostgreSQL
+fly postgres connect -a locar-db
+
+# Destruir app (cuidado!)
+fly apps destroy locar-backend-seu-nome
+```
+
+#### URL da API
+
+Após o deploy, sua API estará disponível em:
+```
+https://locar-backend-seu-nome.fly.dev/api
+```
+
+---
+
+### Deploy no Render (Backend) - ALTERNATIVA
 
 #### Opção 1: Deploy Automático com Blueprint
 
