@@ -40,6 +40,11 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 
+# Manter arquivos de exemplo
+!.env.docker
+!.env.production
+.env.production.local
+
 # Prisma
 prisma/migrations/
 !prisma/migrations/.gitkeep

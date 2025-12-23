@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: locar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: locar
+      POSTGRES_PASSWORD: locar123
+      POSTGRES_DB: locar
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - locar-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U locar']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend NestJS
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: locar-backend
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://locar:locar123@postgres:5432/locar?schema=public
+      PORT: 3000
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - locar-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  locar-network:
+    driver: bridge

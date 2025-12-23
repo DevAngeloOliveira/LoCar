@@ -6,6 +6,7 @@ Sistema completo desenvolvido com **NestJS** (backend) e **PostgreSQL** para ger
 
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Início Rápido](#-início-rápido)
+- [Docker](#-docker)
 - [Arquitetura](#-arquitetura)
 - [Tecnologias](#-tecnologias)
 - [API Endpoints](#-api-endpoints)
@@ -39,6 +40,7 @@ Sistema completo para gestão de locadora de veículos com as seguintes funciona
 - ✅ **Node.js** 18 ou superior
 - ✅ **PostgreSQL** 15 ou superior
 - ✅ **npm** ou **yarn**
+- ✅ **Docker** e **Docker Compose** (opcional, para containerização)
 
 ### Instalação em 5 Passos
 
@@ -118,6 +120,79 @@ curl -X POST http://localhost:3000/api/clientes \
 
 # Listar veículos disponíveis
 curl http://localhost:3000/api/veiculos?disponivel=true
+```
+
+---
+
+## 🐳 Docker
+
+### Opção 1: Produção Completa (Backend + PostgreSQL)
+
+Execute todo o sistema com um único comando:
+
+```bash
+# Subir todos os containers
+docker-compose up -d
+
+# Verificar logs
+docker-compose logs -f backend
+
+# Parar containers
+docker-compose down
+
+# Parar e remover volumes (limpa banco de dados)
+docker-compose down -v
+```
+
+**O que acontece:**
+- ✅ PostgreSQL rodando na porta `5432`
+- ✅ Backend rodando na porta `3000`
+- ✅ Migrations executadas automaticamente
+- ✅ Seeders executados automaticamente
+- ✅ Healthcheck do banco configurado
+
+### Opção 2: Desenvolvimento (Apenas PostgreSQL)
+
+Para desenvolver localmente com apenas o banco em Docker:
+
+```bash
+# Subir apenas PostgreSQL
+docker-compose -f docker-compose.dev.yml up -d
+
+# Configurar DATABASE_URL no .env
+DATABASE_URL="postgresql://locar:locar123@localhost:5433/locar_dev?schema=public"
+
+# Executar migrations
+npm run prisma:migrate
+
+# Iniciar backend localmente
+npm run start:dev
+
+# Acessar Prisma Studio
+docker-compose -f docker-compose.dev.yml up prisma-studio
+# Abrir http://localhost:5555
+```
+
+### Construir Imagem Docker
+
+```bash
+# Build da imagem
+docker build -t locar-backend .
+
+# Executar container manualmente
+docker run -p 3000:3000 \
+  -e DATABASE_URL="postgresql://user:pass@host:5432/db" \
+  locar-backend
+```
+
+### Variáveis de Ambiente Docker
+
+O arquivo [.env.docker](.env.docker) contém as configurações padrão para Docker:
+
+```env
+DATABASE_URL="postgresql://locar:locar123@postgres:5432/locar?schema=public"
+PORT=3000
+NODE_ENV=production
 ```
 
 ---
@@ -565,13 +640,123 @@ npm run lint           # Executa ESLint
 
 ---
 
+## � Deploy
+
+### Deploy no Render (Backend)
+
+#### Opção 1: Deploy Automático com Blueprint
+
+1. **Faça commit dos arquivos Docker:**
+```bash
+git add Dockerfile render.yaml .env.production
+git commit -m "feat: configuração para deploy no Render"
+git push origin main
+```
+
+2. **Configure no Render:**
+   - Acesse [render.com](https://render.com) e faça login
+   - Clique em "New" → "Blueprint"
+   - Conecte seu repositório GitHub (DevAngeloOliveira/LoCar)
+   - O Render detectará automaticamente o `render.yaml`
+   - Confirme e aguarde o deploy automático
+
+3. **Resultado:**
+   - ✅ PostgreSQL criado automaticamente
+   - ✅ Backend implantado com migrations
+   - ✅ Variáveis de ambiente configuradas
+   - ✅ URL pública disponível (ex: `https://locar-backend.onrender.com`)
+
+#### Opção 2: Deploy Manual
+
+1. **Criar PostgreSQL:**
+   - No Render Dashboard → "New" → "PostgreSQL"
+   - Nome: `locar-postgres`
+   - Database: `locar`
+   - Plano: Free
+   - Copie a "Internal Database URL"
+
+2. **Criar Web Service:**
+   - "New" → "Web Service"
+   - Conecte o repositório `DevAngeloOliveira/LoCar`
+   - Configurações:
+     - **Name:** locar-backend
+     - **Environment:** Docker
+     - **Branch:** main
+     - **Instance Type:** Free
+
+3. **Configurar Variáveis de Ambiente:**
+   - `DATABASE_URL`: Cole a Internal Database URL do PostgreSQL
+   - `NODE_ENV`: production
+   - `PORT`: 3000
+   - `FRONTEND_URL`: (adicionar depois que deploy da Vercel estiver pronto)
+
+4. **Deploy:**
+   - Clique em "Create Web Service"
+   - Aguarde o build e deploy (5-10 minutos)
+   - Acesse a URL pública fornecida
+
+#### Verificar Deploy
+
+```bash
+# Testar se a API está respondendo
+curl https://seu-app.onrender.com/api/clientes
+
+# Verificar health
+curl https://seu-app.onrender.com/api/clientes
+```
+
+### Deploy na Vercel (Frontend)
+
+> O frontend será desenvolvido em Next.js e implantado na Vercel
+
+**Configuração necessária:**
+
+1. Após deploy do frontend, copie a URL da Vercel
+2. Adicione a variável de ambiente no Render:
+   - `FRONTEND_URL`: `https://seu-app.vercel.app`
+3. Redeploy o backend no Render para aplicar CORS
+
+### Variáveis de Ambiente para Produção
+
+**Backend (Render):**
+```env
+DATABASE_URL=<fornecido-automaticamente-pelo-render>
+NODE_ENV=production
+PORT=3000
+FRONTEND_URL=https://seu-app.vercel.app
+```
+
+**Frontend (Vercel):**
+```env
+NEXT_PUBLIC_API_URL=https://locar-backend.onrender.com/api
+```
+
+### Troubleshooting Deploy
+
+**Problema:** Build falha no Render
+- Verifique os logs no painel do Render
+- Certifique-se de que o Dockerfile está na raiz do projeto
+- Verifique se todas as dependências estão no package.json
+
+**Problema:** Database connection error
+- Verifique se a DATABASE_URL está correta
+- Use a "Internal Database URL" (não a External)
+- Aguarde o PostgreSQL estar completamente provisionado
+
+**Problema:** Migrations não executam
+- As migrations executam automaticamente no Dockerfile
+- Verifique logs: `npx prisma migrate deploy`
+- Se necessário, execute manualmente via Render Shell
+
+---
+
 ## 🔄 Roadmap
 
 ### Próximas Funcionalidades
 
 - [ ] Autenticação e autorização com JWT
 - [ ] Documentação interativa com Swagger/OpenAPI
-- [ ] Frontend em Next.js com TypeScript
+- [x] Docker e Docker Compose
 - [ ] Sistema de notificações (email/SMS)
 - [ ] Relatórios e dashboard analítico
 - [ ] Integração com gateway de pagamento
@@ -583,10 +768,11 @@ npm run lint           # Executa ESLint
 ### Melhorias Técnicas
 
 - [ ] CI/CD com GitHub Actions
-- [ ] Docker e Docker Compose
+- [x] Deploy no Render (Backend)
+- [ ] Deploy na Vercel (Frontend)
 - [ ] Testes de carga (K6/Artillery)
 - [ ] Documentação de arquitetura (C4 Model)
-- [ ] Healthcheck endpoints
+- [x] Healthcheck endpoints
 - [ ] Versionamento de API
 
 ---

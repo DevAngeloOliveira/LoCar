@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Banco de dados PostgreSQL (Desenvolvimento)
+  postgres-dev:
+    image: postgres:15-alpine
+    container_name: locar-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: locar
+      POSTGRES_PASSWORD: locar123
+      POSTGRES_DB: locar_dev
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - locar-dev-network
+
+  # Prisma Studio (Interface visual)
+  prisma-studio:
+    image: node:18-alpine
+    container_name: locar-prisma-studio
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - '5555:5555'
+    environment:
+      DATABASE_URL: postgresql://locar:locar123@postgres-dev:5432/locar_dev?schema=public
+    depends_on:
+      - postgres-dev
+    networks:
+      - locar-dev-network
+    command: sh -c "npm install && npx prisma studio --port 5555 --hostname 0.0.0.0"
+
+volumes:
+  postgres_dev_data:
+    driver: local
+
+networks:
+  locar-dev-network:
+    driver: bridge
