@@ -1,4 +1,9 @@
-import { IsString, IsNotEmpty, IsDateString, IsOptional } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateAluguelDto {
   @IsString()
@@ -12,10 +17,4 @@ export class CreateAluguelDto {
   @IsDateString({}, { message: 'Data de início inválida' })
   @IsOptional()
   dataInicio?: string;
-}
-
-export class FinalizarAluguelDto {
-  @IsDateString({}, { message: 'Data de fim inválida' })
-  @IsNotEmpty({ message: 'Data de fim é obrigatória' })
-  dataFim: string;
 }

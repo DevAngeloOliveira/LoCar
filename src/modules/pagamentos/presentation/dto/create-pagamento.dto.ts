@@ -1,5 +1,11 @@
-import { IsString, IsNotEmpty, IsNumber, IsEnum, Min } from 'class-validator';
 import { TipoPagamento } from '@prisma/client';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreatePagamentoDto {
   @IsEnum(TipoPagamento, { message: 'Tipo de pagamento inválido' })
