@@ -1,10 +1,26 @@
 import { Module } from '@nestjs/common';
-import { ClientesService } from './clientes.service';
-import { ClientesController } from './clientes.controller';
+import { AtualizarClienteUseCase } from './application/atualizar-cliente.use-case';
+import { BuscarClienteUseCase } from './application/buscar-cliente.use-case';
+import { CadastrarClienteUseCase } from './application/cadastrar-cliente.use-case';
+import { DesativarClienteUseCase } from './application/desativar-cliente.use-case';
+import { ListarClientesUseCase } from './application/listar-clientes.use-case';
+import { CLIENTE_REPOSITORY } from './domain/cliente.repository';
+import { PrismaClienteRepository } from './infra/prisma-cliente.repository';
+import { ClientesController } from './presentation/clientes.controller';
 
 @Module({
   controllers: [ClientesController],
-  providers: [ClientesService],
-  exports: [ClientesService],
+  providers: [
+    CadastrarClienteUseCase,
+    ListarClientesUseCase,
+    BuscarClienteUseCase,
+    AtualizarClienteUseCase,
+    DesativarClienteUseCase,
+    {
+      provide: CLIENTE_REPOSITORY,
+      useClass: PrismaClienteRepository,
+    },
+  ],
+  exports: [BuscarClienteUseCase],
 })
 export class ClientesModule {}

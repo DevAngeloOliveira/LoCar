@@ -1,4 +1,10 @@
-import { IsString, IsEmail, IsNotEmpty, Length, Matches, IsOptional, IsBoolean } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class CreateClienteDto {
   @IsString()
@@ -22,26 +28,4 @@ export class CreateClienteDto {
   @IsEmail({}, { message: 'E-mail inválido' })
   @IsNotEmpty({ message: 'E-mail é obrigatório' })
   email: string;
-}
-
-export class UpdateClienteDto {
-  @IsString()
-  @IsOptional()
-  nome?: string;
-
-  @IsString()
-  @IsOptional()
-  endereco?: string;
-
-  @IsString()
-  @IsOptional()
-  telefone?: string;
-
-  @IsEmail({}, { message: 'E-mail inválido' })
-  @IsOptional()
-  email?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  ativo?: boolean;
 }

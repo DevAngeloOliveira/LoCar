@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../../shared/database/prisma.service';
 import { CreateReservaDto } from './dto/reserva.dto';
 import { VeiculosService } from '../veiculos/veiculos.service';
-import { ClientesService } from '../clientes/clientes.service';
+import { BuscarClienteUseCase } from '../clientes/application/buscar-cliente.use-case';
 import { FuncionariosService } from '../funcionarios/funcionarios.service';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class ReservasService {
   constructor(
     private prisma: PrismaService,
     private veiculosService: VeiculosService,
-    private clientesService: ClientesService,
+    private buscarCliente: BuscarClienteUseCase,
     private funcionariosService: FuncionariosService,
   ) {}
 
@@ -34,7 +34,7 @@ export class ReservasService {
     }
 
     // Validar cliente existe
-    await this.clientesService.findOne(clienteId);
+    await this.buscarCliente.executar(clienteId);
 
     // RF-BE-06: Validar funcionário ativo
     await this.funcionariosService.validateFuncionarioAtivo(funcionarioId);
