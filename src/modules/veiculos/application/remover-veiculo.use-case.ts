@@ -1,9 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Veiculo } from '../domain/veiculo.entity';
-import {
-  VEICULO_REPOSITORY,
-  VeiculoRepository,
-} from '../domain/veiculo.repository';
+import { VEICULO_REPOSITORY, VeiculoRepository } from '../domain/veiculo.repository';
 import { BuscarVeiculoUseCase } from './buscar-veiculo.use-case';
 
 @Injectable()
@@ -19,9 +16,7 @@ export class RemoverVeiculoUseCase {
 
     const alugueisAtivos = await this.veiculoRepository.contarAlugueisAtivos(id);
     if (alugueisAtivos > 0) {
-      throw new BadRequestException(
-        'Não é possível remover veículo com aluguéis ativos',
-      );
+      throw new BadRequestException('Não é possível remover veículo com aluguéis ativos');
     }
 
     return this.veiculoRepository.remover(id);

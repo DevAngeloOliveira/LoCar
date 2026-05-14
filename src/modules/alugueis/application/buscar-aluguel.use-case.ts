@@ -1,9 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AluguelComRelacoes } from '../domain/aluguel.entity';
-import {
-  ALUGUEL_REPOSITORY,
-  AluguelRepository,
-} from '../domain/aluguel.repository';
+import { ALUGUEL_REPOSITORY, AluguelRepository } from '../domain/aluguel.repository';
 
 @Injectable()
 export class BuscarAluguelUseCase {

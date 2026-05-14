@@ -1,9 +1,6 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { BuscarCategoriaUseCase } from '../../categorias/application/buscar-categoria.use-case';
-import {
-  VEICULO_REPOSITORY,
-  VeiculoRepository,
-} from '../domain/veiculo.repository';
+import { VEICULO_REPOSITORY, VeiculoRepository } from '../domain/veiculo.repository';
 import { CreateVeiculoDto } from '../presentation/dto/create-veiculo.dto';
 
 @Injectable()
@@ -15,9 +12,7 @@ export class CadastrarVeiculoUseCase {
   ) {}
 
   async executar(dados: CreateVeiculoDto) {
-    const placaExistente = await this.veiculoRepository.buscarPorPlaca(
-      dados.placa,
-    );
+    const placaExistente = await this.veiculoRepository.buscarPorPlaca(dados.placa);
     if (placaExistente) {
       throw new ConflictException('Placa já cadastrada no sistema');
     }

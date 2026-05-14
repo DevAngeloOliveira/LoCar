@@ -1,9 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Funcionario } from '../domain/funcionario.entity';
-import {
-  FUNCIONARIO_REPOSITORY,
-  FuncionarioRepository,
-} from '../domain/funcionario.repository';
+import { FUNCIONARIO_REPOSITORY, FuncionarioRepository } from '../domain/funcionario.repository';
 
 @Injectable()
 export class BuscarFuncionarioUseCase {
@@ -13,8 +10,7 @@ export class BuscarFuncionarioUseCase {
   ) {}
 
   async executar(id: string): Promise<unknown> {
-    const funcionario =
-      await this.funcionarioRepository.buscarPorIdComReservas(id);
+    const funcionario = await this.funcionarioRepository.buscarPorIdComReservas(id);
     if (!funcionario) {
       throw new NotFoundException('Funcionário não encontrado');
     }

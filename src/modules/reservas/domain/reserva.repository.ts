@@ -18,9 +18,5 @@ export interface ReservaRepository {
   listar(): Promise<unknown[]>;
   buscarPorIdCompleto(id: string): Promise<ReservaCompleta | null>;
   cancelar(id: string): Promise<unknown>;
-  existeConflitoDePeriodo(
-    veiculoId: string,
-    dataInicio: Date,
-    dataFim: Date,
-  ): Promise<boolean>;
+  existeConflitoDePeriodo(veiculoId: string, dataInicio: Date, dataFim: Date): Promise<boolean>;
 }

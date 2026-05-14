@@ -58,11 +58,7 @@ export class PrismaAluguelRepository implements AluguelRepository {
     });
   }
 
-  finalizarComLiberacaoDeVeiculo(
-    id: string,
-    dataFim: Date,
-    veiculoId: string,
-  ) {
+  finalizarComLiberacaoDeVeiculo(id: string, dataFim: Date, veiculoId: string) {
     return this.prisma.$transaction(async (tx) => {
       const aluguelFinalizado = await tx.aluguel.update({
         where: { id },

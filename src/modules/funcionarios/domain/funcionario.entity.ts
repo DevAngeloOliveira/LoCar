@@ -9,10 +9,7 @@ export interface Funcionario {
   updatedAt: Date;
 }
 
-export type FuncionarioCriacao = Omit<
-  Funcionario,
-  'id' | 'createdAt' | 'updatedAt'
->;
+export type FuncionarioCriacao = Omit<Funcionario, 'id' | 'createdAt' | 'updatedAt'>;
 export type FuncionarioAtualizacao = Partial<
   Omit<Funcionario, 'id' | 'matricula' | 'createdAt' | 'updatedAt'>
 >;

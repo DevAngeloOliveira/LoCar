@@ -1,8 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import {
-  PAGAMENTO_REPOSITORY,
-  PagamentoRepository,
-} from '../domain/pagamento.repository';
+import { PAGAMENTO_REPOSITORY, PagamentoRepository } from '../domain/pagamento.repository';
 
 @Injectable()
 export class BuscarPagamentoUseCase {

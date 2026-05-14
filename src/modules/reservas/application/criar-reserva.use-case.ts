@@ -1,16 +1,9 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { BuscarClienteUseCase } from '../../clientes/application/buscar-cliente.use-case';
 import { ValidarFuncionarioAtivoUseCase } from '../../funcionarios/application/validar-funcionario-ativo.use-case';
 import { BuscarVeiculoUseCase } from '../../veiculos/application/buscar-veiculo.use-case';
 import { VerificarDisponibilidadeUseCase } from '../../veiculos/application/verificar-disponibilidade.use-case';
-import {
-  RESERVA_REPOSITORY,
-  ReservaRepository,
-} from '../domain/reserva.repository';
+import { RESERVA_REPOSITORY, ReservaRepository } from '../domain/reserva.repository';
 import { CreateReservaDto } from '../presentation/dto/create-reserva.dto';
 
 @Injectable()
@@ -29,9 +22,7 @@ export class CriarReservaUseCase {
     const fim = new Date(dto.dataFim);
 
     if (inicio >= fim) {
-      throw new BadRequestException(
-        'Data de início deve ser anterior à data de fim',
-      );
+      throw new BadRequestException('Data de início deve ser anterior à data de fim');
     }
 
     if (inicio < new Date()) {
@@ -42,11 +33,7 @@ export class CriarReservaUseCase {
     await this.validarFuncionarioAtivo.executar(dto.funcionarioId);
 
     for (const veiculoId of dto.veiculoIds) {
-      const disponivel = await this.verificarDisponibilidade.executar(
-        veiculoId,
-        inicio,
-        fim,
-      );
+      const disponivel = await this.verificarDisponibilidade.executar(veiculoId, inicio, fim);
       if (!disponivel) {
         const veiculo = await this.buscarVeiculo.garantirExistencia(veiculoId);
         throw new BadRequestException(

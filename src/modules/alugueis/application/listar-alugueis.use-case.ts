@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  ALUGUEL_REPOSITORY,
-  AluguelRepository,
-} from '../domain/aluguel.repository';
+import { ALUGUEL_REPOSITORY, AluguelRepository } from '../domain/aluguel.repository';
 
 @Injectable()
 export class ListarAlugueisUseCase {

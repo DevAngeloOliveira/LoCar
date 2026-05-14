@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
 import { CriarReservaInput } from '../domain/reserva.entity';
-import {
-  ReservaCompleta,
-  ReservaRepository,
-} from '../domain/reserva.repository';
+import { ReservaCompleta, ReservaRepository } from '../domain/reserva.repository';
 
 const includeCompleto = {
   cliente: true,
@@ -32,10 +29,7 @@ export class PrismaReservaRepository implements ReservaRepository {
                 ],
               },
               {
-                AND: [
-                  { dataInicio: { lte: dados.dataFim } },
-                  { dataFim: { gte: dados.dataFim } },
-                ],
+                AND: [{ dataInicio: { lte: dados.dataFim } }, { dataFim: { gte: dados.dataFim } }],
               },
               {
                 AND: [

@@ -36,10 +36,7 @@ export class VeiculosController {
   }
 
   @Get()
-  findAll(
-    @Query('tipo') tipo?: TipoVeiculo,
-    @Query('disponivel') disponivel?: string,
-  ) {
+  findAll(@Query('tipo') tipo?: TipoVeiculo, @Query('disponivel') disponivel?: string) {
     const disponivelBoolean =
       disponivel === 'true' ? true : disponivel === 'false' ? false : undefined;
     return this.listarVeiculos.executar({ tipo, disponivel: disponivelBoolean });

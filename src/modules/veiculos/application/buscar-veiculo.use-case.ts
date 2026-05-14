@@ -1,9 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Veiculo } from '../domain/veiculo.entity';
-import {
-  VEICULO_REPOSITORY,
-  VeiculoRepository,
-} from '../domain/veiculo.repository';
+import { VEICULO_REPOSITORY, VeiculoRepository } from '../domain/veiculo.repository';
 
 @Injectable()
 export class BuscarVeiculoUseCase {

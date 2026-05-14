@@ -92,9 +92,7 @@ describe('RegistrarPagamentoUseCase', () => {
   it('rejeita pagamento com valor inferior ao total', async () => {
     buscarAluguel.executar.mockResolvedValue(aluguelSemPagamento);
 
-    await expect(
-      useCase.executar({ ...dto, valor: 100 }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(useCase.executar({ ...dto, valor: 100 })).rejects.toThrow(BadRequestException);
     expect(repository.criar).not.toHaveBeenCalled();
   });
 });

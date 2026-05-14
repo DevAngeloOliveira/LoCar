@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  api:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: locar
+          POSTGRES_PASSWORD: locar123
+          POSTGRES_DB: locar_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U locar"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://locar:locar123@localhost:5432/locar_test?schema=public
+      PORT: 3000
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Apply schema to test database
+        run: npx prisma db push --skip-generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: E2E tests
+        run: npm run test:e2e
+
+      - name: Build
+        run: npm run build

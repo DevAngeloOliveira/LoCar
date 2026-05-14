@@ -10,9 +10,7 @@ export class ValidarReservaParaAluguelUseCase {
     const reserva = await this.buscarReserva.executar(id);
 
     if (reserva.cancelada) {
-      throw new BadRequestException(
-        'Reserva cancelada não pode gerar aluguel',
-      );
+      throw new BadRequestException('Reserva cancelada não pode gerar aluguel');
     }
 
     if (reserva.aluguel) {

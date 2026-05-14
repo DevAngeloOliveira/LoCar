@@ -1,14 +1,6 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable } from '@nestjs/common';
 import { BuscarAluguelUseCase } from '../../alugueis/application/buscar-aluguel.use-case';
-import {
-  PAGAMENTO_REPOSITORY,
-  PagamentoRepository,
-} from '../domain/pagamento.repository';
+import { PAGAMENTO_REPOSITORY, PagamentoRepository } from '../domain/pagamento.repository';
 import { CreatePagamentoDto } from '../presentation/dto/create-pagamento.dto';
 
 @Injectable()
@@ -27,9 +19,7 @@ export class RegistrarPagamentoUseCase {
     }
 
     if (aluguel.finalizado) {
-      throw new BadRequestException(
-        'Não é possível registrar pagamento para aluguel finalizado',
-      );
+      throw new BadRequestException('Não é possível registrar pagamento para aluguel finalizado');
     }
 
     if (dto.valor < aluguel.valorTotal) {

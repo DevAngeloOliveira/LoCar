@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  RESERVA_REPOSITORY,
-  ReservaRepository,
-} from '../domain/reserva.repository';
+import { RESERVA_REPOSITORY, ReservaRepository } from '../domain/reserva.repository';
 
 @Injectable()
 export class ListarReservasUseCase {

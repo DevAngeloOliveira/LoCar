@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { BuscarCategoriaUseCase } from '../application/buscar-categoria.use-case';
 import { CadastrarCategoriaUseCase } from '../application/cadastrar-categoria.use-case';
 import { ListarCategoriasUseCase } from '../application/listar-categorias.use-case';

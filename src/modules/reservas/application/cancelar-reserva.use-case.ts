@@ -1,8 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import {
-  RESERVA_REPOSITORY,
-  ReservaRepository,
-} from '../domain/reserva.repository';
+import { RESERVA_REPOSITORY, ReservaRepository } from '../domain/reserva.repository';
 import { BuscarReservaUseCase } from './buscar-reserva.use-case';
 
 @Injectable()
@@ -21,9 +18,7 @@ export class CancelarReservaUseCase {
     }
 
     if (reserva.aluguel) {
-      throw new BadRequestException(
-        'Não é possível cancelar reserva com aluguel associado',
-      );
+      throw new BadRequestException('Não é possível cancelar reserva com aluguel associado');
     }
 
     return this.reservaRepository.cancelar(id);

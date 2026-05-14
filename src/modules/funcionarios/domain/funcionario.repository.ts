@@ -1,8 +1,4 @@
-import {
-  Funcionario,
-  FuncionarioAtualizacao,
-  FuncionarioCriacao,
-} from './funcionario.entity';
+import { Funcionario, FuncionarioAtualizacao, FuncionarioCriacao } from './funcionario.entity';
 
 export const FUNCIONARIO_REPOSITORY = Symbol('FUNCIONARIO_REPOSITORY');
 

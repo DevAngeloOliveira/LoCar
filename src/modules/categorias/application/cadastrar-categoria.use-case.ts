@@ -1,9 +1,6 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { Categoria } from '../domain/categoria.entity';
-import {
-  CATEGORIA_REPOSITORY,
-  CategoriaRepository,
-} from '../domain/categoria.repository';
+import { CATEGORIA_REPOSITORY, CategoriaRepository } from '../domain/categoria.repository';
 import { CreateCategoriaDto } from '../presentation/dto/create-categoria.dto';
 
 @Injectable()

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { BuscarPagamentoPorAluguelUseCase } from '../application/buscar-pagamento-por-aluguel.use-case';
 import { BuscarPagamentoUseCase } from '../application/buscar-pagamento.use-case';
 import { ListarPagamentosUseCase } from '../application/listar-pagamentos.use-case';

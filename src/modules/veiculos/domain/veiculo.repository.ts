@@ -17,9 +17,5 @@ export interface VeiculoRepository {
   alterarDisponibilidade(id: string, disponivel: boolean): Promise<Veiculo>;
   remover(id: string): Promise<Veiculo>;
   contarAlugueisAtivos(veiculoId: string): Promise<number>;
-  existeConflitoDeReserva(
-    veiculoId: string,
-    dataInicio: Date,
-    dataFim: Date,
-  ): Promise<boolean>;
+  existeConflitoDeReserva(veiculoId: string, dataInicio: Date, dataFim: Date): Promise<boolean>;
 }

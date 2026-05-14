@@ -193,9 +193,7 @@ describe('ReservasController (e2e)', () => {
     });
 
     it('deve retornar erro ao tentar cancelar reserva já cancelada', () => {
-      return request(app.getHttpServer())
-        .patch(`/api/reservas/${reservaId}/cancelar`)
-        .expect(400);
+      return request(app.getHttpServer()).patch(`/api/reservas/${reservaId}/cancelar`).expect(400);
     });
   });
 });

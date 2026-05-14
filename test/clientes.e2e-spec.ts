@@ -148,9 +148,7 @@ describe('ClientesController (e2e)', () => {
 
   describe('DELETE /api/clientes/:id', () => {
     it('deve desativar (soft delete) um cliente', () => {
-      return request(app.getHttpServer())
-        .delete(`/api/clientes/${createdClienteId}`)
-        .expect(204);
+      return request(app.getHttpServer()).delete(`/api/clientes/${createdClienteId}`).expect(204);
     });
   });
 });

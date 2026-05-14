@@ -27,10 +27,6 @@ import { VeiculosController } from './presentation/veiculos.controller';
       useClass: PrismaVeiculoRepository,
     },
   ],
-  exports: [
-    BuscarVeiculoUseCase,
-    AlterarDisponibilidadeUseCase,
-    VerificarDisponibilidadeUseCase,
-  ],
+  exports: [BuscarVeiculoUseCase, AlterarDisponibilidadeUseCase, VerificarDisponibilidadeUseCase],
 })
 export class VeiculosModule {}

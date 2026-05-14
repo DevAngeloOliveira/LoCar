@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  VEICULO_REPOSITORY,
-  VeiculoRepository,
-} from '../domain/veiculo.repository';
+import { VEICULO_REPOSITORY, VeiculoRepository } from '../domain/veiculo.repository';
 import { BuscarVeiculoUseCase } from './buscar-veiculo.use-case';
 
 @Injectable()
@@ -13,11 +10,7 @@ export class VerificarDisponibilidadeUseCase {
     private readonly buscarVeiculo: BuscarVeiculoUseCase,
   ) {}
 
-  async executar(
-    veiculoId: string,
-    dataInicio: Date,
-    dataFim: Date,
-  ): Promise<boolean> {
+  async executar(veiculoId: string, dataInicio: Date, dataFim: Date): Promise<boolean> {
     const veiculo = await this.buscarVeiculo.garantirExistencia(veiculoId);
     if (!veiculo.disponivel) {
       return false;

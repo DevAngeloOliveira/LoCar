@@ -1,14 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import {
-  Veiculo,
-  VeiculoAtualizacao,
-  VeiculoCriacao,
-} from '../domain/veiculo.entity';
-import {
-  FiltroListarVeiculos,
-  VeiculoRepository,
-} from '../domain/veiculo.repository';
+import { Veiculo, VeiculoAtualizacao, VeiculoCriacao } from '../domain/veiculo.entity';
+import { FiltroListarVeiculos, VeiculoRepository } from '../domain/veiculo.repository';
 
 @Injectable()
 export class PrismaVeiculoRepository implements VeiculoRepository {

@@ -65,27 +65,27 @@ describe('FinalizarAluguelUseCase', () => {
   it('rejeita finalização de aluguel já finalizado', async () => {
     buscarAluguel.executar.mockResolvedValue({ ...baseAluguel, finalizado: true });
 
-    await expect(
-      useCase.executar('al-1', { dataFim: '2026-01-10' }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(useCase.executar('al-1', { dataFim: '2026-01-10' })).rejects.toThrow(
+      BadRequestException,
+    );
     expect(repository.finalizarComLiberacaoDeVeiculo).not.toHaveBeenCalled();
   });
 
   it('rejeita finalização sem pagamento (RN02)', async () => {
     buscarAluguel.executar.mockResolvedValue({ ...baseAluguel, pagamento: null });
 
-    await expect(
-      useCase.executar('al-1', { dataFim: '2026-01-10' }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(useCase.executar('al-1', { dataFim: '2026-01-10' })).rejects.toThrow(
+      BadRequestException,
+    );
     expect(repository.finalizarComLiberacaoDeVeiculo).not.toHaveBeenCalled();
   });
 
   it('rejeita data de fim anterior à data de início', async () => {
     buscarAluguel.executar.mockResolvedValue(baseAluguel);
 
-    await expect(
-      useCase.executar('al-1', { dataFim: '2025-12-15' }),
-    ).rejects.toThrow(BadRequestException);
+    await expect(useCase.executar('al-1', { dataFim: '2025-12-15' })).rejects.toThrow(
+      BadRequestException,
+    );
     expect(repository.finalizarComLiberacaoDeVeiculo).not.toHaveBeenCalled();
   });
 });

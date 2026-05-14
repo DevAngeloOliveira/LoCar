@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { BuscarReservaUseCase } from '../application/buscar-reserva.use-case';
 import { CancelarReservaUseCase } from '../application/cancelar-reserva.use-case';
 import { CriarReservaUseCase } from '../application/criar-reserva.use-case';

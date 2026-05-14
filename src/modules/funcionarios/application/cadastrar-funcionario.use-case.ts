@@ -1,9 +1,6 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { Funcionario } from '../domain/funcionario.entity';
-import {
-  FUNCIONARIO_REPOSITORY,
-  FuncionarioRepository,
-} from '../domain/funcionario.repository';
+import { FUNCIONARIO_REPOSITORY, FuncionarioRepository } from '../domain/funcionario.repository';
 import { CreateFuncionarioDto } from '../presentation/dto/create-funcionario.dto';
 
 @Injectable()
@@ -14,9 +11,7 @@ export class CadastrarFuncionarioUseCase {
   ) {}
 
   async executar(dados: CreateFuncionarioDto): Promise<Funcionario> {
-    const existente = await this.funcionarioRepository.buscarPorMatricula(
-      dados.matricula,
-    );
+    const existente = await this.funcionarioRepository.buscarPorMatricula(dados.matricula);
     if (existente) {
       throw new ConflictException('Matrícula já cadastrada no sistema');
     }

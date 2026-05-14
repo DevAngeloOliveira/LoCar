@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Funcionario } from '../domain/funcionario.entity';
-import {
-  FUNCIONARIO_REPOSITORY,
-  FuncionarioRepository,
-} from '../domain/funcionario.repository';
+import { FUNCIONARIO_REPOSITORY, FuncionarioRepository } from '../domain/funcionario.repository';
 import { BuscarFuncionarioUseCase } from './buscar-funcionario.use-case';
 
 @Injectable()
