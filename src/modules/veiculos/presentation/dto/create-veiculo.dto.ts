@@ -1,5 +1,14 @@
-import { IsString, IsNotEmpty, IsNumber, IsBoolean, IsEnum, IsOptional, Min, ValidateIf } from 'class-validator';
 import { TipoVeiculo } from '@prisma/client';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateVeiculoDto {
   @IsString()
@@ -33,7 +42,6 @@ export class CreateVeiculoDto {
   @IsNotEmpty({ message: 'Categoria é obrigatória' })
   categoriaId: string;
 
-  // Campos específicos para CARRO
   @ValidateIf((o) => o.tipo === TipoVeiculo.CARRO)
   @IsNumber()
   @IsOptional()
@@ -44,7 +52,6 @@ export class CreateVeiculoDto {
   @IsOptional()
   possuiArCondicionado?: boolean;
 
-  // Campos específicos para MOTO
   @ValidateIf((o) => o.tipo === TipoVeiculo.MOTO)
   @IsNumber()
   @IsOptional()
@@ -55,59 +62,7 @@ export class CreateVeiculoDto {
   @IsOptional()
   bau?: boolean;
 
-  // Campos específicos para CAMINHAO
   @ValidateIf((o) => o.tipo === TipoVeiculo.CAMINHAO)
-  @IsNumber()
-  @IsOptional()
-  capacidadeCarga?: number;
-}
-
-export class UpdateVeiculoDto {
-  @IsString()
-  @IsOptional()
-  marca?: string;
-
-  @IsString()
-  @IsOptional()
-  modelo?: string;
-
-  @IsNumber()
-  @IsOptional()
-  ano?: number;
-
-  @IsString()
-  @IsOptional()
-  cor?: string;
-
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  valorDiaria?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  disponivel?: boolean;
-
-  @IsString()
-  @IsOptional()
-  categoriaId?: string;
-
-  @IsNumber()
-  @IsOptional()
-  numeroPortas?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  possuiArCondicionado?: boolean;
-
-  @IsNumber()
-  @IsOptional()
-  cilindradas?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  bau?: boolean;
-
   @IsNumber()
   @IsOptional()
   capacidadeCarga?: number;

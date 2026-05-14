@@ -1,58 +1,52 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../shared/database/prisma.service';
-import { CreateAluguelDto, FinalizarAluguelDto } from './dto/aluguel.dto';
 import { ReservasService } from '../reservas/reservas.service';
-import { VeiculosService } from '../veiculos/veiculos.service';
+import { AlterarDisponibilidadeUseCase } from '../veiculos/application/alterar-disponibilidade.use-case';
+import { BuscarVeiculoUseCase } from '../veiculos/application/buscar-veiculo.use-case';
+import { CreateAluguelDto, FinalizarAluguelDto } from './dto/aluguel.dto';
 
 @Injectable()
 export class AlugueisService {
   constructor(
-    private prisma: PrismaService,
-    private reservasService: ReservasService,
-    private veiculosService: VeiculosService,
+    private readonly prisma: PrismaService,
+    private readonly reservasService: ReservasService,
+    private readonly buscarVeiculo: BuscarVeiculoUseCase,
+    private readonly alterarDisponibilidade: AlterarDisponibilidadeUseCase,
   ) {}
 
-  /**
-   * RF-BE-14: Converter reserva em aluguel
-   * RF-BE-15: Calcular valor total
-   * RN01: Veículo não pode participar de mais de um aluguel ativo
-   */
   async create(createAluguelDto: CreateAluguelDto) {
     const { reservaId, veiculoId, dataInicio } = createAluguelDto;
 
-    // Validar reserva pode gerar aluguel
     await this.reservasService.validarParaAluguel(reservaId);
-
     const reserva = await this.reservasService.findOne(reservaId);
 
-    // Verificar se veículo está na reserva
-    const veiculoNaReserva = reserva.veiculos.find((rv) => rv.veiculoId === veiculoId);
+    const veiculoNaReserva = reserva.veiculos.find(
+      (rv) => rv.veiculoId === veiculoId,
+    );
     if (!veiculoNaReserva) {
       throw new BadRequestException('Veículo não está incluído nesta reserva');
     }
 
-    // RN01: Verificar se veículo já tem aluguel ativo
     const aluguelAtivo = await this.prisma.aluguel.findFirst({
-      where: {
-        veiculoId,
-        finalizado: false,
-      },
+      where: { veiculoId, finalizado: false },
     });
-
     if (aluguelAtivo) {
       throw new BadRequestException('Veículo já possui aluguel ativo');
     }
 
-    const veiculo = await this.veiculosService.findOne(veiculoId);
+    const veiculo = await this.buscarVeiculo.garantirExistencia(veiculoId);
 
-    // Calcular valor total baseado no período da reserva
     const inicio = dataInicio ? new Date(dataInicio) : reserva.dataInicio;
     const diasAluguel = Math.ceil(
-      (reserva.dataFim.getTime() - reserva.dataInicio.getTime()) / (1000 * 60 * 60 * 24),
+      (reserva.dataFim.getTime() - reserva.dataInicio.getTime()) /
+        (1000 * 60 * 60 * 24),
     );
     const valorTotal = diasAluguel * veiculo.valorDiaria;
 
-    // Criar aluguel
     const aluguel = await this.prisma.aluguel.create({
       data: {
         dataInicio: inicio,
@@ -61,15 +55,10 @@ export class AlugueisService {
         clienteId: reserva.clienteId,
         veiculoId,
       },
-      include: {
-        reserva: true,
-        cliente: true,
-        veiculo: true,
-      },
+      include: { reserva: true, cliente: true, veiculo: true },
     });
 
-    // RF-BE-09: Marcar veículo como indisponível
-    await this.veiculosService.setDisponibilidade(veiculoId, false);
+    await this.alterarDisponibilidade.executar(veiculoId, false);
 
     return aluguel;
   }
@@ -104,10 +93,6 @@ export class AlugueisService {
     return aluguel;
   }
 
-  /**
-   * RF-BE-16: Finalizar aluguel
-   * RN02: Aluguel só pode ser finalizado após pagamento
-   */
   async finalizar(id: string, finalizarAluguelDto: FinalizarAluguelDto) {
     const aluguel = await this.findOne(id);
 
@@ -115,24 +100,22 @@ export class AlugueisService {
       throw new BadRequestException('Aluguel já está finalizado');
     }
 
-    // RN02: Verificar se há pagamento
     if (!aluguel.pagamento) {
-      throw new BadRequestException('Aluguel não pode ser finalizado sem pagamento');
+      throw new BadRequestException(
+        'Aluguel não pode ser finalizado sem pagamento',
+      );
     }
 
     const dataFim = new Date(finalizarAluguelDto.dataFim);
-
     if (dataFim < aluguel.dataInicio) {
-      throw new BadRequestException('Data de fim não pode ser anterior à data de início');
+      throw new BadRequestException(
+        'Data de fim não pode ser anterior à data de início',
+      );
     }
 
-    // Atualizar aluguel
     const aluguelFinalizado = await this.prisma.aluguel.update({
       where: { id },
-      data: {
-        dataFim,
-        finalizado: true,
-      },
+      data: { dataFim, finalizado: true },
       include: {
         cliente: true,
         veiculo: true,
@@ -141,8 +124,7 @@ export class AlugueisService {
       },
     });
 
-    // RF-BE-09: Liberar veículo
-    await this.veiculosService.setDisponibilidade(aluguel.veiculoId, true);
+    await this.alterarDisponibilidade.executar(aluguel.veiculoId, true);
 
     return aluguelFinalizado;
   }

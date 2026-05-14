@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, Length, Matches, IsOptional, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateFuncionarioDto {
   @IsString()
@@ -16,22 +16,4 @@ export class CreateFuncionarioDto {
   @IsString()
   @IsNotEmpty({ message: 'Telefone é obrigatório' })
   telefone: string;
-}
-
-export class UpdateFuncionarioDto {
-  @IsString()
-  @IsOptional()
-  nome?: string;
-
-  @IsString()
-  @IsOptional()
-  cargo?: string;
-
-  @IsString()
-  @IsOptional()
-  telefone?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  ativo?: boolean;
 }

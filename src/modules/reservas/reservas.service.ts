@@ -1,83 +1,76 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../shared/database/prisma.service';
-import { CreateReservaDto } from './dto/reserva.dto';
-import { VeiculosService } from '../veiculos/veiculos.service';
 import { BuscarClienteUseCase } from '../clientes/application/buscar-cliente.use-case';
-import { FuncionariosService } from '../funcionarios/funcionarios.service';
+import { ValidarFuncionarioAtivoUseCase } from '../funcionarios/application/validar-funcionario-ativo.use-case';
+import { BuscarVeiculoUseCase } from '../veiculos/application/buscar-veiculo.use-case';
+import { VerificarDisponibilidadeUseCase } from '../veiculos/application/verificar-disponibilidade.use-case';
+import { CreateReservaDto } from './dto/reserva.dto';
 
 @Injectable()
 export class ReservasService {
   constructor(
-    private prisma: PrismaService,
-    private veiculosService: VeiculosService,
-    private buscarCliente: BuscarClienteUseCase,
-    private funcionariosService: FuncionariosService,
+    private readonly prisma: PrismaService,
+    private readonly buscarCliente: BuscarClienteUseCase,
+    private readonly validarFuncionarioAtivo: ValidarFuncionarioAtivoUseCase,
+    private readonly buscarVeiculo: BuscarVeiculoUseCase,
+    private readonly verificarDisponibilidade: VerificarDisponibilidadeUseCase,
   ) {}
 
-  /**
-   * RF-BE-11: Criar reserva
-   * RF-BE-12: Validar conflitos de período e disponibilidade
-   */
   async create(createReservaDto: CreateReservaDto) {
-    const { dataInicio, dataFim, clienteId, funcionarioId, veiculoIds } = createReservaDto;
+    const { dataInicio, dataFim, clienteId, funcionarioId, veiculoIds } =
+      createReservaDto;
 
     const inicio = new Date(dataInicio);
     const fim = new Date(dataFim);
 
-    // Validar datas
     if (inicio >= fim) {
-      throw new BadRequestException('Data de início deve ser anterior à data de fim');
+      throw new BadRequestException(
+        'Data de início deve ser anterior à data de fim',
+      );
     }
 
     if (inicio < new Date()) {
       throw new BadRequestException('Data de início não pode ser no passado');
     }
 
-    // Validar cliente existe
     await this.buscarCliente.executar(clienteId);
+    await this.validarFuncionarioAtivo.executar(funcionarioId);
 
-    // RF-BE-06: Validar funcionário ativo
-    await this.funcionariosService.validateFuncionarioAtivo(funcionarioId);
-
-    // Validar disponibilidade de cada veículo
     for (const veiculoId of veiculoIds) {
-      const disponivel = await this.veiculosService.verificarDisponibilidade(
+      const disponivel = await this.verificarDisponibilidade.executar(
         veiculoId,
         inicio,
         fim,
       );
 
       if (!disponivel) {
-        const veiculo = await this.veiculosService.findOne(veiculoId);
+        const veiculo = await this.buscarVeiculo.garantirExistencia(veiculoId);
         throw new BadRequestException(
           `Veículo ${veiculo.modelo} não disponível para o período selecionado`,
         );
       }
     }
 
-    // Criar reserva com veículos
-    const reserva = await this.prisma.reserva.create({
+    return this.prisma.reserva.create({
       data: {
         dataInicio: inicio,
         dataFim: fim,
         clienteId,
         funcionarioId,
         veiculos: {
-          create: veiculoIds.map((veiculoId) => ({
-            veiculoId,
-          })),
+          create: veiculoIds.map((veiculoId) => ({ veiculoId })),
         },
       },
       include: {
         cliente: true,
         funcionario: true,
-        veiculos: {
-          include: { veiculo: true },
-        },
+        veiculos: { include: { veiculo: true } },
       },
     });
-
-    return reserva;
   }
 
   async findAll() {
@@ -85,9 +78,7 @@ export class ReservasService {
       include: {
         cliente: true,
         funcionario: true,
-        veiculos: {
-          include: { veiculo: true },
-        },
+        veiculos: { include: { veiculo: true } },
       },
       orderBy: { dataReserva: 'desc' },
     });
@@ -99,9 +90,7 @@ export class ReservasService {
       include: {
         cliente: true,
         funcionario: true,
-        veiculos: {
-          include: { veiculo: true },
-        },
+        veiculos: { include: { veiculo: true } },
         aluguel: true,
       },
     });
@@ -113,10 +102,6 @@ export class ReservasService {
     return reserva;
   }
 
-  /**
-   * RF-BE-13: Cancelar reserva
-   * RN03: Reserva cancelada não pode gerar aluguel
-   */
   async cancelar(id: string) {
     const reserva = await this.findOne(id);
 
@@ -125,7 +110,9 @@ export class ReservasService {
     }
 
     if (reserva.aluguel) {
-      throw new BadRequestException('Não é possível cancelar reserva com aluguel associado');
+      throw new BadRequestException(
+        'Não é possível cancelar reserva com aluguel associado',
+      );
     }
 
     return this.prisma.reserva.update({
@@ -134,21 +121,18 @@ export class ReservasService {
       include: {
         cliente: true,
         funcionario: true,
-        veiculos: {
-          include: { veiculo: true },
-        },
+        veiculos: { include: { veiculo: true } },
       },
     });
   }
 
-  /**
-   * Verificar se reserva pode gerar aluguel
-   */
   async validarParaAluguel(id: string): Promise<void> {
     const reserva = await this.findOne(id);
 
     if (reserva.cancelada) {
-      throw new BadRequestException('Reserva cancelada não pode gerar aluguel');
+      throw new BadRequestException(
+        'Reserva cancelada não pode gerar aluguel',
+      );
     }
 
     if (reserva.aluguel) {
