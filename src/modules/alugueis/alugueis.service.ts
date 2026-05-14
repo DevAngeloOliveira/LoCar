@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../shared/database/prisma.service';
+import { PrismaService } from '../../shared/database/prisma.service';
 import { CreateAluguelDto, FinalizarAluguelDto } from './dto/aluguel.dto';
 import { ReservasService } from '../reservas/reservas.service';
 import { VeiculosService } from '../veiculos/veiculos.service';

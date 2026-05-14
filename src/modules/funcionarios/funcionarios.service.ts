@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../shared/database/prisma.service';
+import { PrismaService } from '../../shared/database/prisma.service';
 import { CreateFuncionarioDto, UpdateFuncionarioDto } from './dto/funcionario.dto';
 
 @Injectable()

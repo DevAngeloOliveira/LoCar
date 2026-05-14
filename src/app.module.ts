@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './shared/config/configuration';
 import { PrismaModule } from './shared/database/prisma.module';
 import { HealthModule } from './health/health.module';
-import { ClientesModule } from './clientes/clientes.module';
-import { FuncionariosModule } from './funcionarios/funcionarios.module';
-import { VeiculosModule } from './veiculos/veiculos.module';
-import { CategoriasModule } from './categorias/categorias.module';
-import { ReservasModule } from './reservas/reservas.module';
-import { AlugueisModule } from './alugueis/alugueis.module';
-import { PagamentosModule } from './pagamentos/pagamentos.module';
+import { ClientesModule } from './modules/clientes/clientes.module';
+import { FuncionariosModule } from './modules/funcionarios/funcionarios.module';
+import { VeiculosModule } from './modules/veiculos/veiculos.module';
+import { CategoriasModule } from './modules/categorias/categorias.module';
+import { ReservasModule } from './modules/reservas/reservas.module';
+import { AlugueisModule } from './modules/alugueis/alugueis.module';
+import { PagamentosModule } from './modules/pagamentos/pagamentos.module';
 
 @Module({
   imports: [
