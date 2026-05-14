@@ -1,7 +1,8 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
+import { validateEnv } from './shared/config/configuration';
 import { PrismaModule } from './prisma/prisma.module';
+import { HealthModule } from './health/health.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { FuncionariosModule } from './funcionarios/funcionarios.module';
 import { VeiculosModule } from './veiculos/veiculos.module';
@@ -14,8 +15,10 @@ import { PagamentosModule } from './pagamentos/pagamentos.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnv,
     }),
     PrismaModule,
+    HealthModule,
     ClientesModule,
     FuncionariosModule,
     VeiculosModule,
@@ -23,17 +26,6 @@ import { PagamentosModule } from './pagamentos/pagamentos.module';
     ReservasModule,
     AlugueisModule,
     PagamentosModule,
-  ],
-  providers: [
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
-      useValue: new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    },
   ],
 })
 export class AppModule {}

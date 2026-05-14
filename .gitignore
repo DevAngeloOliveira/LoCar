@@ -1,10 +1,16 @@
-# compiled output
-/dist
-/node_modules
-/build
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Test coverage
+coverage/
+.nyc_output/
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -12,15 +18,24 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# OS
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Manter arquivos de exemplo
+!.env.example
+!.env.docker.example
+!.env.production.example
+
+# OS files
 .DS_Store
+Thumbs.db
 
-# Tests
-/coverage
-/.nyc_output
-
-# IDEs and editors
-/.idea
+# IDEs
+.idea/
 .project
 .classpath
 .c9/
@@ -33,18 +48,10 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Environment
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Temporary files
+.tmp/
+temp/
 
-# Manter arquivos de exemplo
-!.env.docker
-!.env.production
-.env.production.local
-
-# Prisma
-prisma/migrations/
-!prisma/migrations/.gitkeep
+# Prisma artefatos locais (mas migrations DEVEM ser versionadas)
+prisma/dev.db
+prisma/dev.db-journal
