@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../shared/database/prisma.service';
-import { ReservasService } from '../reservas/reservas.service';
+import { ValidarReservaParaAluguelUseCase } from '../reservas/application/validar-reserva-para-aluguel.use-case';
 import { AlterarDisponibilidadeUseCase } from '../veiculos/application/alterar-disponibilidade.use-case';
 import { BuscarVeiculoUseCase } from '../veiculos/application/buscar-veiculo.use-case';
 import { CreateAluguelDto, FinalizarAluguelDto } from './dto/aluguel.dto';
@@ -13,7 +13,7 @@ import { CreateAluguelDto, FinalizarAluguelDto } from './dto/aluguel.dto';
 export class AlugueisService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly reservasService: ReservasService,
+    private readonly validarReservaParaAluguel: ValidarReservaParaAluguelUseCase,
     private readonly buscarVeiculo: BuscarVeiculoUseCase,
     private readonly alterarDisponibilidade: AlterarDisponibilidadeUseCase,
   ) {}
@@ -21,8 +21,7 @@ export class AlugueisService {
   async create(createAluguelDto: CreateAluguelDto) {
     const { reservaId, veiculoId, dataInicio } = createAluguelDto;
 
-    await this.reservasService.validarParaAluguel(reservaId);
-    const reserva = await this.reservasService.findOne(reservaId);
+    const reserva = await this.validarReservaParaAluguel.executar(reservaId);
 
     const veiculoNaReserva = reserva.veiculos.find(
       (rv) => rv.veiculoId === veiculoId,

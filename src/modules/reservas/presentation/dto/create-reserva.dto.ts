@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsDateString, IsArray, ArrayMinSize } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
 export class CreateReservaDto {
   @IsDateString({}, { message: 'Data de início inválida' })
