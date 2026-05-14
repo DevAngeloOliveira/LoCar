@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// LoCar — schema Prisma
+// Documentacao das decisoes em docs/database.md
 
 generator client {
   provider = "prisma-client-js"
@@ -10,159 +10,164 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Modelo Cliente
 model Cliente {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid())
   nome      String
-  cpf       String     @unique
+  cpf       String   @unique
   endereco  String
   telefone  String
   email     String
-  ativo     Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  
-  reservas  Reserva[]
-  alugueis  Aluguel[]
-  
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reservas Reserva[]
+  alugueis Aluguel[]
+
+  @@index([ativo])
   @@map("clientes")
 }
 
-// Modelo Funcionário
 model Funcionario {
-  id         String     @id @default(uuid())
-  nome       String
-  matricula  String     @unique
-  cargo      String
-  telefone   String
-  ativo      Boolean    @default(true)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  
-  reservas   Reserva[]
-  
+  id        String   @id @default(uuid())
+  nome      String
+  matricula String   @unique
+  cargo     String
+  telefone  String
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reservas Reserva[]
+
+  @@index([ativo])
   @@map("funcionarios")
 }
 
-// Modelo Categoria
 model Categoria {
-  id        String    @id @default(uuid())
-  nome      String    @unique
+  id        String   @id @default(uuid())
+  nome      String   @unique
   descricao String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  
-  veiculos  Veiculo[]
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  veiculos Veiculo[]
+
   @@map("categorias")
 }
 
-// Enum para tipos de veículos
 enum TipoVeiculo {
   CARRO
   MOTO
   CAMINHAO
 }
 
-// Modelo base Veículo (abstrato implementado via herança)
 model Veiculo {
-  id             String       @id @default(uuid())
-  placa          String       @unique
-  marca          String
-  modelo         String
-  ano            Int
-  cor            String
-  valorDiaria    Float
-  disponivel     Boolean      @default(true)
-  tipo           TipoVeiculo
-  
-  // Campos específicos para Carro
-  numeroPortas          Int?
-  possuiArCondicionado  Boolean?
-  
-  // Campos específicos para Moto
-  cilindradas    Int?
-  bau            Boolean?
-  
-  // Campos específicos para Caminhão
+  id          String      @id @default(uuid())
+  placa       String      @unique
+  marca       String
+  modelo      String
+  ano         Int
+  cor         String
+  valorDiaria Float
+  disponivel  Boolean     @default(true)
+  tipo        TipoVeiculo
+
+  // Carro
+  numeroPortas         Int?
+  possuiArCondicionado Boolean?
+
+  // Moto
+  cilindradas Int?
+  bau         Boolean?
+
+  // Caminhao
   capacidadeCarga Float?
-  
-  categoriaId    String
-  categoria      Categoria    @relation(fields: [categoriaId], references: [id])
-  
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  
+
+  categoriaId String
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   reservaVeiculos ReservaVeiculo[]
   alugueis        Aluguel[]
-  
+
+  @@index([tipo])
+  @@index([disponivel])
+  @@index([categoriaId])
   @@map("veiculos")
 }
 
-// Modelo Reserva
 model Reserva {
-  id             String     @id @default(uuid())
-  dataReserva    DateTime   @default(now())
-  dataInicio     DateTime
-  dataFim        DateTime
-  cancelada      Boolean    @default(false)
-  
-  clienteId      String
-  cliente        Cliente    @relation(fields: [clienteId], references: [id])
-  
-  funcionarioId  String
-  funcionario    Funcionario @relation(fields: [funcionarioId], references: [id])
-  
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  
-  veiculos       ReservaVeiculo[]
-  aluguel        Aluguel?
-  
+  id          String   @id @default(uuid())
+  dataReserva DateTime @default(now())
+  dataInicio  DateTime
+  dataFim     DateTime
+  cancelada   Boolean  @default(false)
+
+  clienteId String
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+
+  funcionarioId String
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  veiculos ReservaVeiculo[]
+  aluguel  Aluguel?
+
+  @@index([cancelada])
+  @@index([dataInicio])
+  @@index([dataFim])
+  @@index([clienteId])
+  @@index([funcionarioId])
   @@map("reservas")
 }
 
-// Tabela de relacionamento muitos-para-muitos entre Reserva e Veículo
 model ReservaVeiculo {
-  id         String   @id @default(uuid())
-  reservaId  String
-  veiculoId  String
-  
-  reserva    Reserva  @relation(fields: [reservaId], references: [id], onDelete: Cascade)
-  veiculo    Veiculo  @relation(fields: [veiculoId], references: [id])
-  
-  createdAt  DateTime @default(now())
-  
+  id        String @id @default(uuid())
+  reservaId String
+  veiculoId String
+
+  reserva Reserva @relation(fields: [reservaId], references: [id], onDelete: Cascade)
+  veiculo Veiculo @relation(fields: [veiculoId], references: [id])
+
+  createdAt DateTime @default(now())
+
   @@unique([reservaId, veiculoId])
+  @@index([veiculoId])
   @@map("reserva_veiculos")
 }
 
-// Modelo Aluguel
 model Aluguel {
-  id           String    @id @default(uuid())
-  dataInicio   DateTime
-  dataFim      DateTime?
-  valorTotal   Float
-  finalizado   Boolean   @default(false)
-  
-  reservaId    String    @unique
-  reserva      Reserva   @relation(fields: [reservaId], references: [id])
-  
-  clienteId    String
-  cliente      Cliente   @relation(fields: [clienteId], references: [id])
-  
-  veiculoId    String
-  veiculo      Veiculo   @relation(fields: [veiculoId], references: [id])
-  
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  
-  pagamento    Pagamento?
-  
+  id         String    @id @default(uuid())
+  dataInicio DateTime
+  dataFim    DateTime?
+  valorTotal Float
+  finalizado Boolean   @default(false)
+
+  reservaId String  @unique
+  reserva   Reserva @relation(fields: [reservaId], references: [id])
+
+  clienteId String
+  cliente   Cliente @relation(fields: [clienteId], references: [id])
+
+  veiculoId String
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pagamento Pagamento?
+
+  @@index([finalizado])
+  @@index([veiculoId, finalizado])
+  @@index([clienteId])
   @@map("alugueis")
 }
 
-// Enum para tipo de pagamento
 enum TipoPagamento {
   DINHEIRO
   CARTAO_CREDITO
@@ -171,18 +176,17 @@ enum TipoPagamento {
   TRANSFERENCIA
 }
 
-// Modelo Pagamento
 model Pagamento {
-  id              String         @id @default(uuid())
-  tipo            TipoPagamento
-  valor           Float
-  dataPagamento   DateTime       @default(now())
-  
-  aluguelId       String         @unique
-  aluguel         Aluguel        @relation(fields: [aluguelId], references: [id])
-  
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  
+  id            String        @id @default(uuid())
+  tipo          TipoPagamento
+  valor         Float
+  dataPagamento DateTime      @default(now())
+
+  aluguelId String  @unique
+  aluguel   Aluguel @relation(fields: [aluguelId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("pagamentos")
 }
