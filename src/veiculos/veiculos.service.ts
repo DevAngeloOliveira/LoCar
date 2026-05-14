@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../shared/database/prisma.service';
 import { CreateVeiculoDto, UpdateVeiculoDto } from './dto/veiculo.dto';
 import { TipoVeiculo } from '@prisma/client';
 

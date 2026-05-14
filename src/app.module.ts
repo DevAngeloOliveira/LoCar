@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './shared/config/configuration';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaModule } from './shared/database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { FuncionariosModule } from './funcionarios/funcionarios.module';
